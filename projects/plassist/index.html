@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plassist の裏側 — 開発とグロースの自動化</title>
+<meta name="description" content="個人開発アプリPlassistを支える、Claude Codeでの開発自動化とマーケティング自動化の設計。独立レビュー・独立評価によるバイアス排除の仕組みを中心に。">
+<link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="crumbs"><a href="../../">永田稔人</a> / Projects</nav>
+
+  <header class="site-header">
+    <h1>Plassist の裏側<br>— 開発とグロースの自動化 —</h1>
+    <p class="lede">
+      このページはPlassistという<strong>アプリの機能紹介ではない。</strong>
+      プログラミング未経験から個人でアプリを作り、Claude Codeで開発とマーケティングの
+      両方を自動化していった過程についてのページ。
+    </p>
+    <p class="muted" style="margin-top:0.8rem; font-size:0.85rem;">
+      個人開発／React Native・Expo／App Store公開中・Google Play申請中
+    </p>
+  </header>
+
+  <section>
+    <h2>Plassistとは（1行）</h2>
+    <p>
+      立てた予定と実際に使った時間を並べて比較する時間管理アプリ。受験期に「願望で計画を立てては
+      崩壊させる」を繰り返していた原体験から、約4年越しにアプリとして実装した。
+      機能の詳細は割愛し、以下は開発とマーケティングの<strong>裏側</strong>に絞って書く。
+    </p>
+  </section>
+
+  <section>
+    <h2>動機の変遷</h2>
+    <p>
+      このプロジェクトの位置づけは、作り始めてから3回変わっている。
+    </p>
+    <ol>
+      <li><strong>始まり: 自分の課題を解決したい／アプリを作ってみたい。</strong>
+        受験期からの原体験（願望ベースの計画が崩壊する）を解決するアプリを、
+        プログラミング未経験の状態から作ってみたいという動機で着手した。</li>
+      <li><strong>次の段階: マーケティングとClaude Code自動化の実践的な学習材料。</strong>
+        公開しても誰にもダウンロードされない現実に直面し、マーケティングを独学。
+        並行して、開発とマーケティングの両方をClaude Codeでどう自動化するかを
+        試行錯誤する実践の場になった。以下に書くのはこの段階で作った仕組み。</li>
+      <li><strong>現在: メタシステムの一端。</strong>
+        個人の知識ベース・計画管理・戦略検討の仕組み（<code>knowledge</code>・<code>plan</code>・
+        <code>advisement</code>）と連動させる方向にシフトしている。この接続の詳細は、
+        メタシステムを扱う別ページで書く（ここでは立ち位置の変化として触れるにとどめる）。</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>開発の自動化 — Claude Codeでの多エージェント体制</h2>
+    <p>
+      設計の核は「隔離が要る所（クリーンな調査・バイアスのない評価・ノイズの多い実装/デバッグ）だけを
+      サブエージェント化し、意図を込める核（計画・戦略・文言）はメインセッションに残す」という分担。
+      対話が命の2つの工程（アイディア出し・学習）は、サブエージェントにせずメインで読む
+      「ペルソナ」（<code>idea.md</code>・<code>learn.md</code>）にしている。
+    </p>
+
+    <h3>回し方</h3>
+    <ol>
+      <li><strong>発想</strong> — <code>idea.md</code>。Claudeは案を出さず、質問で考えを引き出す
+        ファシリテーター役に徹する。「なぜそれをやりたいか」「今できていないのはなぜか」を
+        一つずつ掘り下げ、最後に本人の言葉で一枚にまとめる。</li>
+      <li><strong>計画</strong> — <code>design-rules-pg.md</code>。変更を小さく検証可能な単位に分解し、
+        影響範囲と既存パターンを調べたうえで、実装に進む前に一度立ち止まって本人の合意を待つ。</li>
+      <li><strong>実装</strong> — <code>pg-implementer</code>（サブエージェント）。合意済みの計画を
+        最小差分で実装する。設計判断はしない。曖昧な点に気づいたら憶測で埋めず止まって報告する。</li>
+      <li><strong>理解</strong> — <code>learn.md</code>。実装された差分を、本人が自分の言葉で
+        説明できるまで、ソクラテス式に導く。「これは何をしていると思う?」とまず予想させ、
+        実際とのズレだけを埋める。答えを一気に開示しない。</li>
+      <li><strong>デバッグ</strong> — <code>pg-debugger</code>（サブエージェント）。再現→切り分け→
+        最小修正の手順で直す。ノイズの多い調査ログをメインの会話から隔離する。</li>
+      <li><strong>独立レビュー</strong> — <code>pg-reviewer</code>（サブエージェント）。
+        誰が・どんな意図で書いたかを知らない立場で、差分だけを見て辛口に評価する。</li>
+    </ol>
+
+    <h3>バイアスを消す設計（最も気を使った部分）</h3>
+    <p>
+      <code>pg-reviewer</code>には、設計意図を書いたファイル（<code>design-rules-pg.md</code>など）を
+      渡さない。理由は<code>pg-reviewer.md</code>自身に明記してある。
+    </p>
+    <blockquote style="border-left:3px solid var(--border); margin:1rem 0; padding:0.5rem 1rem; color:var(--text-muted); font-size:0.92rem;">
+      設計意図を書いたファイルは根拠にしない。仮に見えても無視する。判断が「設計通りか」に
+      引っ張られ、外からの素直な評価でなくなるため。
+    </blockquote>
+    <p>
+      レビューは毎回新規のセッションで呼び、前回の指摘を引き継がせない。「さっき作った良いコード」と
+      持ち上げず、対象を中立に指すだけで依頼する。役割は「気持ちよく通すこと」ではなく
+      「欠陥を見つけるボトルネック」と明文化している。
+    </p>
+
+    <h3>実例1: Googleカレンダー同期の安全ガード</h3>
+    <p>
+      Googleカレンダーとの双方向同期機能を実装した際、安全ガードを2種実装した。
+      自己検証（diff照合・型チェック・実機テスト）を済ませたあと、設計意図を渡さない独立レビューを
+      2周かけたところ、<strong>自己検証では見逃していた安全設計の欠陥を2回とも検出</strong>して修正した。
+      「自分で書いて自分でチェックする」だけでは抜ける穴が、対象だけを見る独立審査で見つかった実例。
+    </p>
+
+    <h3>実例2: OTA配信事故と再発防止（2026-08-17）</h3>
+    <p>
+      5月にビルドしたバージョン（v1.0.12 build14）に対して、8月に検証目的で
+      <code>eas update --branch production</code>を直接叩いてしまい、依存ライブラリのバージョンが
+      ズレたJSが配信された。TestFlightとApp Storeは同じproductionチャンネル・同じ
+      <code>runtimeVersion</code>を見ているため、<strong>両方の実機で起動直後クラッシュ</strong>が発生した。
+      <code>eas update:roll-back-to-embedded</code>で復旧。
+    </p>
+    <p>再発防止は2段で講じた。</p>
+    <ul>
+      <li><strong>構造的対策</strong>: <code>app.json</code>の<code>runtimeVersion</code>を
+        ネイティブ変更を自動検知する<code>{"policy": "fingerprint"}</code>に変更。ネイティブに
+        影響する依存が変わると自動でバージョンが変わるため、本体と噛み合わないJSはそもそも配信されなくなる
+        （既存の配布済みビルドには遡って効かないため、次にビルドし直したタイミングから有効）。</li>
+      <li><strong>運用ルール</strong>: <code>production</code>を検証目的で直接叩かない。
+        検証したいJS変更は必ず<code>preview</code>チャンネルに先に配信し、動作確認してから昇格する。
+        「実機でサッと試したいだけ」でも<code>production</code>を経由しない。</li>
+    </ul>
+
+    <h3>リポジトリの棚卸し</h3>
+    <p>
+      開発途中でReplitのテンプレートから移行した経緯があり、<code>server/</code>・<code>shared/</code>・
+      <code>drizzle.config.ts</code>などが「旧テンプレートの名残で、どこからも参照されていない」ことを
+      明示的に棚卸しし、<code>CLAUDE.md</code>に「読むのも触るのも不要」と書いて固定した。
+      死んだ配線（現状どこからも呼ばれていない画面・モジュール）も同様に名指しし、
+      「改修のついでに触らない・変更提案が必要になったら実行せず理由を添えて確認する」というルールを置いた。
+      これにより、後から参加するAIエージェント（自分自身を含む）が生きているコードと死んでいるコードを
+      毎回調べ直さずに済む。
+    </p>
+  </section>
+
+  <section>
+    <h2>マーケティングの自動化</h2>
+    <p>
+      開発と同じ「実行と独立評価を分ける」構造を、マーケティングにも適用した。
+      考え方はSTP（商品・顧客・競合を定義し、顧客が価値を置く点に競合がやっていない切り口で
+      差別化する）。ESで自分自身に適用したSTPを、今度はプロダクトに適用する形になっている。
+    </p>
+
+    <h3>回し方</h3>
+    <ol>
+      <li><strong>分析</strong> — <code>mk-analyst</code>（サブエージェント）。
+        <code>marketing/data</code>の実データ（App Store Connect・Play Consoleのエクスポート）だけを根拠に、
+        獲得・維持・訴求のどこに課題があるかを<code>findings.md</code>にまとめる。施策は決めない。</li>
+      <li><strong>発想</strong> — <code>idea.md</code>。findingsを見ながら狙いを整理する。</li>
+      <li><strong>施策設計</strong> — <code>design-rules-mk.md</code>。打つ施策を優先度つきで並べ、
+        各施策がfindingsのどの課題への答えかを明示してから、本人の合意を待つ。</li>
+      <li><strong>作成</strong> — メインセッションでASO文言・スクリーンショット構成・LPを作成。
+        事実・数字は<code>marketing/data</code>から正確に引用し、創作しない。</li>
+      <li><strong>独立評価</strong> — <code>mk-critic</code>（サブエージェント）。
+        誰が・どんな狙いで作ったかを知らない初見のターゲットユーザーとして、辛口に評価する。
+        流暢さ・体裁は加点せず、「誰の何を解決するかが具体か」「次の行動が明確か」だけを見る。</li>
+    </ol>
+
+    <h3>実例1: リネームの実測効果</h3>
+    <p>
+      旧名「Logi」がLogitechの登録商標と衝突するリスクを特定し、「Plassist」へリネームした。
+      候補2件（Dailyplan・Tokilog）を実地検索で棄却した2回の失敗から、
+      「①J-PlatPat商標 ②ストア実地検索 ③Google検索」の3点確認フローを確立している。
+      アプリ名を「Plassist - 勉強計画の改善アプリ」に変更した前後（v1.0.8→v1.0.10）を
+      App Store Connectの実データで比較すると、日平均DLは0.3→1.1（+267%）、
+      ページ閲覧→DL率は3.8%→14.9%（+292%）だった（2026/3/20〜4/17）。
+    </p>
+
+    <h3>実例2: ニッチキーワード戦略</h3>
+    <p>
+      競合が不在の検索キーワード「計画倒れ」に集中するニッチ戦略を採用し、App Store検索で1位を獲得した。
+      公開約3か月で累計70DL、月次3→20→41件と成長。ファネルは表示5,112→ページ閲覧655（12.8%）→
+      初回DL70（閲覧比10.7%）。
+    </p>
+
+    <h3>実例3: 直近の分析（2026-08-19・mk-analystの実出力）</h3>
+    <p>
+      直近90日（2026-05-20〜08-17）のApp Store Connect実データを<code>mk-analyst</code>が分析した結果、
+      期間合計でインプレッション→ページ閲覧（CTR）9.19%・ページ閲覧→DL（CVR）8.29%だった。
+      外部の一般的なベンチマーク（カテゴリ非特化の参考値）と比較すると、CTRはおおむね同水準だが、
+      <strong>CVRはベンチマーク目安（概ね25〜34%）のおよそ1/3〜1/4</strong>で、
+      自社データの中でも最も外部水準から乖離していた。この分析は
+      「プロダクトページに来た人に、何が伝わっていないか（訴求段階）」を伸びしろとして示唆している。
+    </p>
+    <p class="muted" style="font-size:0.9rem;">
+      この分析には、絶対数の小ささ（DLは1日0〜2件）ゆえに月次比較は参考程度に留めるべきという留保、
+      スパイクの原因が特定不能である旨、検索キーワード別内訳や継続率が今回のデータには
+      含まれていない旨が、すべて明記されている。<code>mk-analyst</code>は「無い数字を作らない」
+      「事実と推測を必ず区別する」というルールで動いている。
+    </p>
+
+    <h3>実例4: 誇張のチェック</h3>
+    <p>
+      ストア説明文の改訂案を作る際、「広告なし」「登録不要」「データは端末内保存」といった
+      安心材料の文言を書く前に、それぞれ実際のコードで裏取りしている
+      （広告SDK・アナリティクスSDKがpackage.jsonに無い／ログイン画面が実装に無い／
+      サーバーAPI通信が無い、をそれぞれ確認）。
+      マーケティング文言も「事実に基づく」という規約をコードレベルで運用している。
+    </p>
+  </section>
+
+  <section>
+    <h2>この設計の元になっている考え方</h2>
+    <p>
+      「実行する役割」と「それを独立に判定する役割」を分け、判定側には設計意図を渡さない —
+      このパターンは、Plassistだけでなく、就活のES作成（<code>es-researcher</code>／<code>es-evaluator</code>）
+      でも同じ形で使っている。個人の知識ベース・計画管理と合わせた「メタシステム」全体の設計思想は、
+      別ページで詳しく書く予定。
+    </p>
+  </section>
+
+  <section>
+    <h2>コード・設定ファイル</h2>
+    <p class="muted" style="font-size:0.9rem;">
+      アプリ本体のソースコードではなく、この自動化を成立させている「仕組み側」のファイルを公開する。
+    </p>
+    <ul class="resource-list">
+      <li>
+        <span>使い方（キット全体の説明）</span>
+        <span class="desc"><a href="config/kit-README.md">kit-README.md</a></span>
+      </li>
+      <li>
+        <span>プロジェクトの約束事（中立。戦略は書かない）</span>
+        <span class="desc"><a href="config/CLAUDE.md">CLAUDE.md</a></span>
+      </li>
+      <li>
+        <span>アイディア出しモード</span>
+        <span class="desc"><a href="config/idea.md">idea.md</a></span>
+      </li>
+      <li>
+        <span>学習モード</span>
+        <span class="desc"><a href="config/learn.md">learn.md</a></span>
+      </li>
+      <li>
+        <span>設計ルール（プログラミング／マーケティング）</span>
+        <span class="desc"><a href="config/design-rules-pg.md">design-rules-pg.md</a> ／
+          <a href="config/design-rules-mk.md">design-rules-mk.md</a></span>
+      </li>
+      <li>
+        <span>実装・デバッグ・独立レビューのサブエージェント</span>
+        <span class="desc">
+          <a href="config/agents/pg-implementer.md">pg-implementer.md</a> ／
+          <a href="config/agents/pg-debugger.md">pg-debugger.md</a> ／
+          <a href="config/agents/pg-reviewer.md">pg-reviewer.md</a>
+        </span>
+      </li>
+      <li>
+        <span>グロース分析・独立評価のサブエージェント</span>
+        <span class="desc">
+          <a href="config/agents/mk-analyst.md">mk-analyst.md</a> ／
+          <a href="config/agents/mk-critic.md">mk-critic.md</a>
+        </span>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="site-footer">
+    <a href="../../">← 永田稔人のポートフォリオに戻る</a>
+  </footer>
+</div>
+</body>
+</html>
