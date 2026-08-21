@@ -202,28 +202,41 @@
     </ol>
 
     <h3>実例1: リネームと、そのあとの実際の推移</h3>
+    <p class="callout limits">
+      App Store Connectには性質の異なる2つの指標体系がある。<strong>App Analytics</strong>の
+      「インストール数」は、データ共有に同意したユーザーだけを対象にした推定値（母数が小さい）。
+      <strong>Sales and Trends</strong>の「ユニット数」は、実際の取引に基づく数で、母数はこちらの方が大きい。
+      両者を混同していたことに気づき、以降はSales and Trendsの実データ（<code>itunes_sales_chart</code>の
+      CSVエクスポート）を、月次の実績としては優先的に使うようにしている。
+    </p>
     <p>
       旧名「Logi」がLogitechの登録商標と衝突するリスクを特定し、「Plassist」へリネームした。
       候補2件（Dailyplan・Tokilog）を実地検索で棄却した2回の失敗から、
       「①J-PlatPat商標 ②ストア実地検索 ③Google検索」の3点確認フローを確立している。
-      リネーム前後（v1.0.8→v1.0.10。この間に他の変更も含む）をApp Store Connectの実データで比較すると、
-      日平均DLは0.3件→1.1件、ページ閲覧→DL率は3.8%→14.9%へと伸びた（2026/3/20〜4/17）。
-      競合が不在の検索キーワード「計画倒れ」に集中するニッチ戦略も採り、App Store検索で1位になった。
-      その後の月次ダウンロード数は3月3件→4月20件→5月41件と伸びたが、
-      <strong>6月は15件まで落ち込み（5月比63%減）</strong>、7月19件・8月（17日換算）22件と
-      緩やかな回復基調にある。初速の伸びがそのまま続くとは限らないことを、自分の手元データで確認した形になる。
+      リネーム前後（v1.0.8→v1.0.10。この間に他の変更も含む）をApp Analyticsの実データで比較すると、
+      日平均インストール数は0.3件→1.1件、ページ閲覧→インストール率は3.8%→14.9%へと伸びた
+      （2026/3/20〜4/17）。競合が不在の検索キーワード「計画倒れ」に集中するニッチ戦略も採り、
+      App Store検索で1位になった。
+    </p>
+    <p>
+      その後の月次の実績を、Sales and Trendsのユニット数（App Store Connectの実データ）で見ると、
+      3月3件→4月23件→5月46件と伸びたが、<strong>6月は14件まで落ち込み（5月比70%減）</strong>、
+      7月20件・8月（19日換算）21件と緩やかな回復基調にある。初速の伸びがそのまま続くとは
+      限らないことを、自分の手元データで確認した形になる。
     </p>
 
     <h3>実例2: 直近の分析（2026-08-19・mk-analystの実出力）</h3>
     <p>
-      直近90日（2026-05-20〜08-17、DL合計71件）のApp Store Connect実データを<code>mk-analyst</code>が
-      分析した結果、期間合計でインプレッション→ページ閲覧（CTR）9.19%・ページ閲覧→DL（CVR）8.29%だった。
+      直近90日（2026-05-20〜08-17）のApp Store Connect実データを<code>mk-analyst</code>が分析した結果、
+      期間合計でインプレッション→ページ閲覧（CTR）9.19%・ページ閲覧→インストール（CVR）8.29%だった
+      （この分析はApp Analyticsのインストール数ベースで、同期間のインストール数は71件。
+      同じ期間のSales and Trendsのユニット数は69件で、ほぼ近い水準だった）。
       PlassistのApp Storeカテゴリ（Education）に絞った外部ベンチマーク（SplitMetrics調べの中央値6.75%）
       と比べると、<strong>CVRはカテゴリ中央値を上回っている</strong>。カテゴリ別の外部ベンチマークが
       無いCTRについては、外部水準との比較は今回は行わず、自社データの90日推移を基準に見ている。
     </p>
     <p class="muted" style="font-size:0.9rem;">
-      この分析には、DL合計71件・90日間という規模ゆえに月次比較は参考程度に留めるべきという留保、
+      この分析には、絶対数の規模ゆえに月次比較は参考程度に留めるべきという留保、
       スパイクの原因が特定不能である旨、検索キーワード別内訳や継続率が今回のデータには
       含まれていない旨が、すべて明記されている。<code>mk-analyst</code>は「無い数字を作らない」
       「事実と推測を必ず区別する」というルールで動いている。
@@ -254,49 +267,41 @@
       アプリ本体のソースコードではなく、この自動化を成立させている「仕組み側」のファイルを公開する。
     </p>
 
-    <h3>ファイル構成の一例（参考。Plassist本体とは別のプロジェクトのもの）</h3>
+    <h3>Time-Manager（Plassist）リポジトリの実際の構成</h3>
     <p>
-      下のPlassistの構成は、React Native/Expoのアプリ開発に合わせたシンプルなものになっている。
-      参考として、データ分析寄りの別プロジェクトで使っている、より作り込んだ構成の例も置いておく。
-      プロジェクトの性質に応じて、どこまでこの粒度で分けるかを都度判断している。
+      ビルド生成物（<code>node_modules/</code>・<code>.expo/</code>・<code>dist/</code>）を除いた実物。
     </p>
-    <pre><code>yyyymmdd_pjt_name/
-├── CLAUDE.md                  ← プロジェクト全体の指示書
-├── AGENTS.md                  ← サブエージェント向けの指示書
-├── .mcp.json                  ← 外部ツール連携の設定
+    <pre><code>Time-Manager/
+├── CLAUDE.md                    ← プロジェクトの約束事
+├── design-rules-pg.md           ← プログラミング設計ルール
+├── design-rules-mk.md           ← マーケティング設計ルール
+├── idea.md                      ← アイディア出しモード
+├── learn.md                     ← 学習モード
+├── README.md                    ← キットの使い方
+├── app.json / app.config.js / eas.json   ← Expo・EASビルド設定
 │
-├── .claude/                   ← Claude Code の設定フォルダ（中心）
-│   ├── settings.json          ←   権限・hooks・環境変数
-│   ├── rules/                 ←   パス別・言語別の細かいルール
-│   ├── skills/                ←   繰り返し作業の手順書
-│   ├── agents/                ←   専門サブエージェントの定義
-│   ├── agent_memory/          ←   サブエージェント用 memory の保存先
-│   └── memory/                ←   auto memory の保存先
+├── .claude/
+│   ├── agents/                  ← pg-implementer / pg-debugger / pg-reviewer / mk-analyst / mk-critic
+│   └── settings.local.json      ← 許可コマンドの設定
 │
-├── scripts/                   ← hooks・statusline スクリプト等
-│   ├── statusline.py
-│   └── hooks/
+├── client/                      ← アプリ本体（実際に動いているのはここだけ）
+│   ├── App.tsx
+│   ├── screens/ ／ navigation/ ／ components/
+│   ├── contexts/ ／ hooks/ ／ lib/
+│   └── constants/
 │
-├── app/                       ← 実装コード一式
-│   ├── source/                ←   Python スクリプト
-│   │   ├── XXXXX.py
-│   │   └── config/            ←   設定値（パス・パラメータ）
-│   │        └── XXXXX.py
-│   ├── data/                  ←   データファイル
-│   │   ├── input/
-│   │   └── output/
-│   ├── log/                   ←   実行ログ
-│   └── tests/                 ←   テストコード
+├── marketing/
+│   ├── data/                    ← App Store Connectの実データ（CSV）とmk-analystの分析結果
+│   ├── app-store-redesign/      ← ストア掲載の改訂案・スクリーンショット
+│   └── play-store/              ← Google Play掲載素材
 │
-└── docs/                       ← ドキュメント（コンテキスト含む）
-     ├── 00_read_me/              ←   プロジェクト説明・機能対応表
-     ├── 01_user_provided_rules/  ←   詳細ルール原本（参照専用）
-     ├── 02_skills/               ←   skill の入出力ファイル置き場
-     └── 10_source/               ←   コードと1対1対応するドキュメント</code></pre>
+└── server/ shared/ drizzle.config.ts .replit scripts/build.js
+    ← Replit時代の名残。client/からは一切参照されておらず、
+      CLAUDE.mdに「読むのも触るのも不要」と明記して残してある</code></pre>
     <p class="muted" style="font-size:0.85rem;">
-      狙いは、指示書（CLAUDE.md）・設定（.claude/）・実装（app/）・文脈と根拠（docs/）を
-      物理的に分けておくこと。特にdocs/を「コードと1対1対応するドキュメント」として持つことで、
-      後から参加するAIエージェントが、なぜそのコードがその形になっているかを読めば分かる状態を作る。
+      指示書（CLAUDE.md・design-rules-*）・設定（.claude/）・実装（client/）・
+      マーケの実データと成果物（marketing/）を分けており、下段の旧テンプレートの名残だけが
+      例外として棚卸し済みの状態で残っている（前述の「リポジトリの棚卸し」参照）。
     </p>
 
     <h3>Plassistで実際に公開しているファイル</h3>
