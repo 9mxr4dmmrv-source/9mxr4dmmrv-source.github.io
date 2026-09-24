@@ -55,6 +55,76 @@
       どの作業場でも AI（Claude Code）と一緒に作業する。そのままでは、ある作業場で得た教訓は、その会話が終わると失われる。
       別の作業場へは、なおさら届かない。このリポジトリは、作業場をまたいで知識を集め、また各作業場に戻すための中継点である。
     </p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 720 430" role="img" aria-label="知識ベースと作業場の関係。作業場から知識ベースの生ログへ /rec で判断と失敗を追記し、生ログは2回以上再現したら型に昇格する。型は /recall で作業を始める前に引かれ、作業場の規約や memory に固定される。共通規約は1つの正本を全作業場が読む。">
+    <defs>
+      <marker id="f1-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+      <marker id="f1-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+      <marker id="f1-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--text-muted)"/></marker>
+    </defs>
+    <g fill="currentColor">
+      <rect x="10" y="10" width="700" height="165" rx="10" style="fill:var(--bg-subtle);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="26" y="34" font-size="13" font-weight="600">個人知識ベース（非公開の git リポジトリ）</text>
+
+      <rect x="30" y="50" width="190" height="105" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="125" y="80" text-anchor="middle" font-size="13" font-weight="600">生ログ（79件）</text>
+      <text x="125" y="102" text-anchor="middle">作業ごとの記録</text>
+      <text x="125" y="122" text-anchor="middle" style="fill:var(--text-muted)">追記だけ・書き換えない</text>
+
+      <line x1="220" y1="104" x2="296" y2="104" stroke="currentColor" stroke-width="1.8" marker-end="url(#f1-a)"/>
+      <text x="258" y="82" text-anchor="middle" font-size="11">2回以上再現</text>
+      <text x="258" y="96" text-anchor="middle" font-size="11">したら昇格</text>
+
+      <rect x="300" y="50" width="190" height="105" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="395" y="80" text-anchor="middle" font-size="13" font-weight="600">型（12件）</text>
+      <text x="395" y="102" text-anchor="middle">判断の手順・失敗の型</text>
+      <text x="395" y="122" text-anchor="middle" style="fill:var(--text-muted)">適用条件・実装先つき</text>
+
+      <rect x="520" y="50" width="170" height="105" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="605" y="80" text-anchor="middle" font-size="13" font-weight="600">共通規約</text>
+      <text x="605" y="102" text-anchor="middle">情報の置き場のルール</text>
+      <text x="605" y="122" text-anchor="middle" style="fill:var(--text-muted)">正本は1つだけ</text>
+
+      <line x1="125" y1="285" x2="125" y2="158" stroke="currentColor" stroke-width="2" marker-end="url(#f1-a)"/>
+      <text x="137" y="212" font-size="12.5" font-weight="600">/rec（上り）</text>
+      <text x="137" y="230" font-size="11.5">作業の終わりに、</text>
+      <text x="137" y="246" font-size="11.5">判断・失敗を追記</text>
+
+      <line x1="395" y1="158" x2="395" y2="283" style="stroke:var(--accent)" stroke-width="2.4" marker-end="url(#f1-acc)"/>
+      <text x="407" y="212" font-size="12.5" font-weight="600">/recall（下り）</text>
+      <text x="407" y="230" font-size="11.5">始める前に型を引き、</text>
+      <text x="407" y="246" font-size="11.5">規約・memory に固定</text>
+
+      <line x1="605" y1="158" x2="605" y2="283" style="stroke:var(--text-muted)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#f1-mut)"/>
+      <text x="617" y="222" font-size="11.5">全作業場が</text>
+      <text x="617" y="238" font-size="11.5">同じ正本を読む</text>
+
+      <rect x="10" y="285" width="700" height="135" rx="10" style="fill:var(--bg-subtle);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="26" y="309" font-size="13" font-weight="600">作業場（目的ごとの git リポジトリ・6つ。どれも AI と作業する）</text>
+
+      <rect x="30" y="322" width="210" height="85" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="135" y="348" text-anchor="middle" font-size="13" font-weight="600">就職活動</text>
+      <text x="135" y="369" text-anchor="middle">規約（CLAUDE.md）・memory</text>
+      <text x="135" y="389" text-anchor="middle" style="fill:var(--text-muted)">成果物・台帳</text>
+
+      <rect x="255" y="322" width="210" height="85" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="360" y="348" text-anchor="middle" font-size="13" font-weight="600">個人開発アプリ</text>
+      <text x="360" y="369" text-anchor="middle">規約（CLAUDE.md）・memory</text>
+      <text x="360" y="389" text-anchor="middle" style="fill:var(--text-muted)">成果物・台帳</text>
+
+      <rect x="480" y="322" width="210" height="85" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="585" y="348" text-anchor="middle" font-size="13" font-weight="600">学習・計画 ほか</text>
+      <text x="585" y="369" text-anchor="middle">規約（CLAUDE.md）・memory</text>
+      <text x="585" y="389" text-anchor="middle" style="fill:var(--text-muted)">成果物・台帳</text>
+    </g>
+      </svg>
+      <figcaption>
+        図1　知識ベースと作業場の関係。作業場で得た判断や失敗は <code>/rec</code> で知識ベースの生ログに上がり、
+        別の場面でも再現したものが「型」になる。型は <code>/recall</code> で、次の作業を始める前に作業場の規約や memory へ戻す（青い矢印）。
+        作業場の AI が毎回読むのは自分の作業場の規約と memory だけなので、この「戻して固定する」矢印が無いと、教訓は作業に届かない。
+      </figcaption>
+    </figure>
   </section>
 
   <section>
@@ -84,6 +154,45 @@
         どれほど良い型でも、判断するその場で読まれなければ効かない。
         だから、記録を作業に戻す経路で大事なのは書き方よりも置き場である</li>
     </ol>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 720 290" role="img" aria-label="抽象度を横軸にとると、射程は抽象ほど広がり、実行可能性は抽象ほど下がる。両方が十分な中間に使える帯があり、具体すぎると一回限り、抽象すぎると標語になる。">
+    <defs>
+      <marker id="f2-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+      <marker id="f2-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+      <marker id="f2-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--text-muted)"/></marker>
+    </defs>
+    <g fill="currentColor">
+      <rect x="250" y="40" width="220" height="190" style="fill:var(--accent-bg)"/>
+      <text x="360" y="60" text-anchor="middle" font-size="13" font-weight="600">使える帯</text>
+      <text x="360" y="77" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">（位置は読む人と時点で動く）</text>
+
+      <line x1="80" y1="230" x2="80" y2="32" stroke="currentColor" stroke-width="1.2" marker-end="url(#f2-a)"/>
+      <line x1="80" y1="230" x2="672" y2="230" stroke="currentColor" stroke-width="1.2" marker-end="url(#f2-a)"/>
+      <text x="72" y="44" text-anchor="end" font-size="11" style="fill:var(--text-muted)">高い</text>
+      <text x="72" y="228" text-anchor="end" font-size="11" style="fill:var(--text-muted)">低い</text>
+      <text x="82" y="252" font-size="12">具体</text>
+      <text x="375" y="252" text-anchor="middle" font-size="12" style="fill:var(--text-muted)">情報の抽象度（粒度の逆）</text>
+      <text x="668" y="252" text-anchor="end" font-size="12">抽象</text>
+
+      <line x1="80" y1="215" x2="660" y2="55" stroke="currentColor" stroke-width="2.4"/>
+      <text x="656" y="44" text-anchor="end" font-size="12" font-weight="600">射程（効く場面の広さ）</text>
+
+      <line x1="80" y1="55" x2="660" y2="215" style="stroke:var(--text-muted)" stroke-width="2.4" stroke-dasharray="7 5"/>
+      <text x="90" y="44" font-size="12" font-weight="600">実行可能性（そのまま行動に使えるか）</text>
+
+      <text x="165" y="146" text-anchor="middle" font-size="12.5" font-weight="600">一回限り</text>
+      <text x="165" y="163" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">次回には使えない</text>
+      <text x="570" y="146" text-anchor="middle" font-size="12.5" font-weight="600">標語</text>
+      <text x="570" y="163" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">行動を決められない</text>
+    </g>
+      </svg>
+      <figcaption>
+        図2　修正1の中身。最初の仮説は「抽象的なほど応用できる」（実線の射程）だけを見ていた。
+        実際には、抽象度を上げるほど、そのまま行動に使える度合い（破線）が下がる。両方が足りる中間の帯（青）だけが使える。
+        型に「適用条件」を書き残すのは、抽象化しても行動に戻せるようにするためである。図は関係の向きを示す模式図で、数値ではない。
+      </figcaption>
+    </figure>
 
     <h3>粒度が変えるのは4つの量</h3>
     <p><strong>情報の具体・抽象は、1つの軸ではなく、4つの量を同時に動かす。</strong>ここから置き場の原理を導いた。</p>
@@ -129,7 +238,7 @@
 
     <h3>記録を作業に戻す経路 — 「引く」より「固定する」</h3>
     <p>
-      <strong>書いただけの記録は、次の作業では読まれない。だから、記録と作業の間を往復するコマンドを4つ作った。</strong>
+      <strong>書いただけの記録は、次の作業では読まれない。だから、記録と作業の間を往復するコマンドを4つ作った（図1）。</strong>
     </p>
     <ul>
       <li><code>/rec</code>（上り）: 作業の終わりに、判断と理由、失敗と原因、予測と結果を生ログに追記する</li>
@@ -141,12 +250,72 @@
     </ul>
 
     <h3>実際に効いた例</h3>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 720 250" role="img" aria-label="左: 教訓を知識ベースに記録しただけでは、就活の作業をする AI は就活の memory と規約しか読まないので教訓が届かず、再発した。右: /recall で就活の memory に固定した後は、作業のたびに読まれる。">
+    <defs>
+      <marker id="f3-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+      <marker id="f3-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+      <marker id="f3-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--text-muted)"/></marker>
+    </defs>
+    <g fill="currentColor">
+      <rect x="10" y="10" width="340" height="230" rx="10" style="fill:none;stroke:var(--border)" stroke-width="1.2"/>
+      <text x="180" y="34" text-anchor="middle" font-size="12.5" font-weight="600">記録しただけ（2026-09-12 に再発）</text>
+
+      <rect x="25" y="55" width="145" height="66" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="97" y="79" text-anchor="middle" font-weight="600">知識ベース</text>
+      <text x="97" y="97" text-anchor="middle" font-size="11">教訓: 終日の予定が</text>
+      <text x="97" y="112" text-anchor="middle" font-size="11">1日ずれる</text>
+
+      <rect x="190" y="55" width="145" height="66" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="262" y="82" text-anchor="middle" font-weight="600">就活の memory</text>
+      <text x="262" y="102" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">（教訓なし）</text>
+
+      <rect x="107" y="168" width="146" height="54" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="180" y="191" text-anchor="middle" font-weight="600">就活の作業をする AI</text>
+      <text x="180" y="209" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">memory と規約だけ読む</text>
+
+      <line x1="250" y1="121" x2="208" y2="165" stroke="currentColor" stroke-width="1.8" marker-end="url(#f3-a)"/>
+      <text x="238" y="152" font-size="11">読む</text>
+
+      <line x1="100" y1="121" x2="146" y2="165" style="stroke:var(--text-muted)" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <line x1="115" y1="136" x2="131" y2="152" style="stroke:var(--text-muted)" stroke-width="2"/>
+      <line x1="131" y1="136" x2="115" y2="152" style="stroke:var(--text-muted)" stroke-width="2"/>
+      <text x="104" y="152" text-anchor="end" font-size="11" style="fill:var(--text-muted)">読まない</text>
+
+      <rect x="370" y="10" width="340" height="230" rx="10" style="fill:none;stroke:var(--border)" stroke-width="1.2"/>
+      <text x="540" y="34" text-anchor="middle" font-size="12.5" font-weight="600">作業場に固定した後</text>
+
+      <rect x="385" y="55" width="130" height="66" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="450" y="82" text-anchor="middle" font-weight="600">知識ベース</text>
+      <text x="450" y="102" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">記録は残る</text>
+
+      <line x1="515" y1="88" x2="557" y2="88" style="stroke:var(--accent)" stroke-width="2.2" marker-end="url(#f3-acc)"/>
+      <text x="536" y="79" text-anchor="middle" font-size="11">固定</text>
+
+      <rect x="560" y="55" width="135" height="66" rx="8" style="fill:var(--accent-bg);stroke:var(--accent)" stroke-width="1.6"/>
+      <text x="627" y="82" text-anchor="middle" font-weight="600">就活の memory</text>
+      <text x="627" y="102" text-anchor="middle" font-size="11">教訓を固定済み</text>
+
+      <rect x="467" y="168" width="146" height="54" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="540" y="191" text-anchor="middle" font-weight="600">就活の作業をする AI</text>
+      <text x="540" y="209" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">作業のたびに読む</text>
+
+      <line x1="615" y1="121" x2="573" y2="165" style="stroke:var(--accent)" stroke-width="2.2" marker-end="url(#f3-acc)"/>
+      <text x="603" y="152" font-size="11">読む</text>
+    </g>
+      </svg>
+      <figcaption>
+        図3　修正3（応用力は、情報の性質と置き場の掛け算）の実例。同じ教訓でも、知識ベースにあるだけでは、就活の作業をする AI には届かなかった。
+        就活の作業場の memory に固定すると、作業のたびに読まれる。
+      </figcaption>
+    </figure>
     <ul>
-      <li><strong>記録しただけでは再発した。固定したら止まった。</strong>
+      <li><strong>記録しただけでは再発した。固定した後は、再発の記録が無い。</strong>
         カレンダーに終日の予定を入れると日付が1日前にずれる失敗を、2026-09-08〜11 の作業の記録として知識ベースに残した。
         しかし 2026-09-12、就職活動の作業場で同じ形で再発した。その作業場の AI は、知識ベースを読まないからである。
         ここから「教訓は、それを使う作業が読む場所に固定しないと再発する」という型の候補が生まれた。
-        この教訓は今、就職活動の作業場の memory に固定してある。上の仮説の修正3（置き場との掛け算）の実例である</li>
+        この教訓は 2026-09-15 に就職活動の作業場の memory へ固定し、それ以降、同じ失敗は記録されていない（2026-09-24 時点）。上の仮説の修正3（置き場との掛け算）の実例である</li>
       <li><strong>型を、移す先の制約に合わせて具体化した。</strong>
         2026-08-15、先に別の作業場で作っていた意思決定の仕組みを、就職活動の作業場へ移した。
         移したのは4つ（撤退の基準を事前に書く／投入する時間の上限を事前に固定する／企業の事実には出典を必ず付ける／予測と結果を記録して見比べる台帳）。
@@ -189,6 +358,61 @@
       <li><strong>ハイブリッド</strong>: 2つの検索の順位を RRF（各方式での順位から 1/(60＋順位) を計算して足す）で1つにまとめる</li>
       <li><strong>差分更新</strong>: 索引は本文のハッシュで管理し、2回目以降は新しい断片だけを変換する。最初の変換は476断片で524秒</li>
     </ul>
+
+
+    <figure class="diagram">
+      <svg viewBox="0 0 720 250" role="img" aria-label="生ログ78件を476断片に分割し、ベクトル検索とキーワード検索の2つの索引にする。問いは両方で検索され、2つの順位を RRF で統合して上位5件を返す。すべて手元の PC の中で完結し、記録を外部に送らない。">
+    <defs>
+      <marker id="f4-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+      <marker id="f4-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+      <marker id="f4-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--text-muted)"/></marker>
+    </defs>
+    <g fill="currentColor">
+      <rect x="10" y="8" width="700" height="234" rx="10" style="fill:none;stroke:var(--text-muted)" stroke-width="1.2" stroke-dasharray="6 5"/>
+      <text x="24" y="232" font-size="11" style="fill:var(--text-muted)">手元の PC の中で完結（記録を外部のサービスに送らない）</text>
+
+      <rect x="28" y="100" width="92" height="52" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="74" y="122" text-anchor="middle" font-weight="600">生ログ</text>
+      <text x="74" y="140" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">78件</text>
+      <line x1="120" y1="126" x2="146" y2="126" stroke="currentColor" stroke-width="1.8" marker-end="url(#f4-a)"/>
+
+      <rect x="148" y="100" width="90" height="52" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="193" y="122" text-anchor="middle" font-weight="600">分割</text>
+      <text x="193" y="140" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">476断片</text>
+      <line x1="238" y1="126" x2="287" y2="126" stroke="currentColor" stroke-width="1.8" marker-end="url(#f4-a)"/>
+      <text x="262" y="118" text-anchor="middle" font-size="11">索引</text>
+
+      <rect x="320" y="16" width="130" height="30" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="385" y="36" text-anchor="middle">問い（ふつうの文）</text>
+      <line x1="385" y1="46" x2="385" y2="60" stroke="currentColor" stroke-width="1.8" marker-end="url(#f4-a)"/>
+
+      <rect x="290" y="62" width="190" height="128" rx="8" style="fill:var(--bg-subtle);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="385" y="80" text-anchor="middle" font-weight="600">2つの検索</text>
+      <rect x="302" y="88" width="166" height="42" rx="6" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="385" y="105" text-anchor="middle">ベクトル（意味で探す）</text>
+      <text x="385" y="121" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">ruri-v3（日本語の埋め込み）</text>
+      <rect x="302" y="138" width="166" height="42" rx="6" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="385" y="155" text-anchor="middle">キーワード（文字で探す）</text>
+      <text x="385" y="171" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">BM25・文字2-gram</text>
+
+      <line x1="480" y1="126" x2="527" y2="126" stroke="currentColor" stroke-width="1.8" marker-end="url(#f4-a)"/>
+      <text x="504" y="118" text-anchor="middle" font-size="11">順位</text>
+
+      <rect x="530" y="100" width="90" height="52" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="575" y="122" text-anchor="middle" font-weight="600">RRF</text>
+      <text x="575" y="140" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">順位を統合</text>
+      <line x1="620" y1="126" x2="637" y2="126" stroke="currentColor" stroke-width="1.8" marker-end="url(#f4-a)"/>
+
+      <rect x="640" y="100" width="62" height="52" rx="8" style="fill:var(--bg);stroke:var(--text-muted)" stroke-width="1.2"/>
+      <text x="671" y="122" text-anchor="middle" font-weight="600">上位</text>
+      <text x="671" y="140" text-anchor="middle" font-size="11" style="fill:var(--text-muted)">5件</text>
+    </g>
+      </svg>
+      <figcaption>
+        図4　検索の流れ。記録を分割して2種類の索引にしておき、問いが来たら両方で検索し、2つの順位を RRF で1つにまとめる。
+        埋め込みのモデルも手元の PC で動かしているので、非公開の記録はどこにも送られない。
+      </figcaption>
+    </figure>
 
     <h3>評価 — 問いを作る人が答えを知っていると、評価は甘くなる</h3>
     <p>
